@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:8000",
+  "executionArgs": {
+    "projectName": "laravel-admin-boilerplate",
+    "projectPath": "C:\\Users\\user\\Desktop\\Srt\\homus\\laravel-admin-boilerplate",
+    "testIds": [],
+    "additionalInstruction": "Focus on testing the admin UI components, navigation, forms, data tables, charts, and responsive design. Test both light and dark modes. Verify all admin pages load correctly and interactive elements work as expected.",
+    "envs": {
+      "API_KEY": "sk-user-rLh5nOoKTLOf_C3PiR-pNlGV1e_eFKMFa4JQi4tPMYFeANroytTZ0G7-XogTs9oijTbrnqn2M-WdbSdIDEWjQJMV49pDeuJL7a9O0xXXhnCzoDxRJ5jX42QnODyNRvAoi5k"
+    }
+  },
+  "proxy": "http://e747f0fc-2ce5-4aea-92e9-3def8d3dc99a:vgSYfNuJdH3AhDdGlHs0oP7xva0Dn4FC@tun.testsprite.com:8080"
+}
