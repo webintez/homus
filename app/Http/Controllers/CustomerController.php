@@ -137,13 +137,49 @@ class CustomerController extends Controller
             ->with('success', 'Booking cancelled successfully.');
     }
 
-    public function services()
+    public function services(Request $request)
     {
         $categories = ServiceCategory::active()->ordered()->with(['services' => function($query) {
             $query->active()->ordered();
         }])->get();
 
-        return view('customer.services', compact('categories'));
+        // Build query for services
+        $query = Service::active()->with('category');
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                  ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        // Sort functionality
+        switch ($request->sort) {
+            case 'price_low':
+                $query->orderBy('base_price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('base_price', 'desc');
+                break;
+            case 'duration':
+                $query->orderBy('estimated_duration', 'asc');
+                break;
+            case 'name':
+            default:
+                $query->orderBy('name', 'asc');
+                break;
+        }
+
+        $services = $query->paginate(12)->withQueryString();
+
+        return view('customer.services', compact('categories', 'services'));
     }
 
     public function showService(Service $service)

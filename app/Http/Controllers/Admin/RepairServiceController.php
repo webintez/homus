@@ -237,6 +237,14 @@ class RepairServiceController extends Controller
             ->with('success', 'Service category updated successfully.');
     }
 
+    public function destroyServiceCategory(ServiceCategory $category)
+    {
+        $category->delete();
+
+        return redirect()->route('admin.repair-service.service-categories')
+            ->with('success', 'Service category deleted successfully.');
+    }
+
     public function services()
     {
         $services = Service::with(['category'])
@@ -296,6 +304,75 @@ class RepairServiceController extends Controller
 
         return redirect()->route('admin.repair-service.services')
             ->with('success', 'Service created successfully.');
+    }
+
+    public function editService(Service $service)
+    {
+        $categories = ServiceCategory::active()->ordered()->get();
+        return view('admin.repair-service.services.edit', compact('service', 'categories'));
+    }
+
+    public function updateService(Request $request, Service $service)
+    {
+        $validator = Validator::make($request->all(), [
+            'category_id' => 'required|exists:service_categories,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'base_price' => 'required|numeric|min:0',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'estimated_duration' => 'nullable|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'boolean',
+            'sort_order' => 'integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = $request->only([
+            'category_id', 'name', 'description', 'base_price', 'hourly_rate',
+            'estimated_duration', 'is_active', 'sort_order'
+        ]);
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($service->image) {
+                Storage::disk('public')->delete($service->image);
+            }
+            $data['image'] = $request->file('image')->store('services', 'public');
+        }
+
+        $service->update([
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'slug' => \Str::slug($request->name),
+            'description' => $request->description,
+            'base_price' => $request->base_price,
+            'hourly_rate' => $request->hourly_rate,
+            'estimated_duration' => $request->estimated_duration,
+            'image' => $data['image'] ?? $service->image,
+            'is_active' => $request->boolean('is_active', true),
+            'sort_order' => $request->sort_order ?? 0,
+        ]);
+
+        return redirect()->route('admin.repair-service.services')
+            ->with('success', 'Service updated successfully.');
+    }
+
+    public function destroyService(Service $service)
+    {
+        // Delete image if exists
+        if ($service->image) {
+            Storage::disk('public')->delete($service->image);
+        }
+
+        $service->delete();
+
+        return redirect()->route('admin.repair-service.services')
+            ->with('success', 'Service deleted successfully.');
     }
 
     // Booking Management
@@ -416,6 +493,66 @@ class RepairServiceController extends Controller
 
         return redirect()->route('admin.repair-service.components')
             ->with('success', 'Component created successfully.');
+    }
+
+    public function editComponent(Component $component)
+    {
+        return view('admin.repair-service.components.edit', compact('component'));
+    }
+
+    public function updateComponent(Request $request, Component $component)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'part_number' => 'required|string|max:255|unique:components,part_number,' . $component->id,
+            'description' => 'nullable|string|max:1000',
+            'price' => 'required|numeric|min:0',
+            'stock_quantity' => 'required|integer|min:0',
+            'min_stock_level' => 'required|integer|min:0',
+            'category' => 'nullable|string|max:100',
+            'brand' => 'nullable|string|max:100',
+            'model' => 'nullable|string|max:100',
+            'compatible_appliances' => 'nullable|array',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = $request->only([
+            'name', 'part_number', 'description', 'price', 'stock_quantity',
+            'min_stock_level', 'category', 'brand', 'model', 'compatible_appliances', 'is_active'
+        ]);
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($component->image) {
+                Storage::disk('public')->delete($component->image);
+            }
+            $data['image'] = $request->file('image')->store('components', 'public');
+        }
+
+        $component->update($data);
+
+        return redirect()->route('admin.repair-service.components')
+            ->with('success', 'Component updated successfully.');
+    }
+
+    public function destroyComponent(Component $component)
+    {
+        // Delete image if exists
+        if ($component->image) {
+            Storage::disk('public')->delete($component->image);
+        }
+
+        $component->delete();
+
+        return redirect()->route('admin.repair-service.components')
+            ->with('success', 'Component deleted successfully.');
     }
 
     // Reports

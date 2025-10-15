@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Create Component')
+@section('title', 'Edit Component')
 
 @section('content')
 <div class="px-6 py-8">
@@ -8,8 +8,8 @@
     <div class="mb-8">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Add New Component</h2>
-                <p class="mt-3 text-lg text-gray-600 dark:text-gray-300">Create a new component for your repair inventory</p>
+                <h2 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Edit Component</h2>
+                <p class="mt-3 text-lg text-gray-600 dark:text-gray-300">Update the component information</p>
             </div>
             <a href="{{ route('admin.repair-service.components') }}" 
                class="inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-all duration-200">
@@ -34,15 +34,16 @@
                 </div>
                 <div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Component Details</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Fill in the information below to create a new component</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Update the information below to modify this component</p>
                 </div>
             </div>
         </div>
 
         <!-- Form Content -->
         <div class="p-8">
-            <form action="{{ route('admin.repair-service.components.store') }}" method="POST" class="space-y-8">
+            <form action="{{ route('admin.repair-service.components.update', $component) }}" method="POST" class="space-y-8">
                 @csrf
+                @method('PUT')
                 
                 <!-- Basic Information Section -->
                 <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-800">
@@ -62,7 +63,7 @@
                             <input type="text" 
                                    id="name" 
                                    name="name" 
-                                   value="{{ old('name') }}" 
+                                   value="{{ old('name', $component->name) }}" 
                                    required
                                    class="w-full px-4 py-3 border border-blue-300 dark:border-blue-600 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('name') border-red-500 focus:ring-red-500 @enderror"
                                    placeholder="Enter component name">
@@ -74,12 +75,13 @@
                         <!-- Part Number -->
                         <div>
                             <label for="part_number" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Part Number
+                                Part Number <span class="text-red-500">*</span>
                             </label>
                             <input type="text" 
                                    id="part_number" 
                                    name="part_number" 
-                                   value="{{ old('part_number') }}" 
+                                   value="{{ old('part_number', $component->part_number) }}" 
+                                   required
                                    class="w-full px-4 py-3 border border-blue-300 dark:border-blue-600 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('part_number') border-red-500 focus:ring-red-500 @enderror"
                                    placeholder="e.g., ABC123">
                             @error('part_number')
@@ -97,7 +99,7 @@
                                   name="description" 
                                   rows="3" 
                                   class="w-full px-4 py-3 border border-blue-300 dark:border-blue-600 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('description') border-red-500 focus:ring-red-500 @enderror"
-                                  placeholder="Enter component description">{{ old('description') }}</textarea>
+                                  placeholder="Enter component description">{{ old('description', $component->description) }}</textarea>
                         @error('description')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -126,7 +128,7 @@
                                 <input type="number" 
                                        id="price" 
                                        name="price" 
-                                       value="{{ old('price') }}" 
+                                       value="{{ old('price', $component->price) }}" 
                                        step="0.01" 
                                        min="0" 
                                        required
@@ -146,7 +148,7 @@
                             <input type="number" 
                                    id="stock_quantity" 
                                    name="stock_quantity" 
-                                   value="{{ old('stock_quantity', 0) }}" 
+                                   value="{{ old('stock_quantity', $component->stock_quantity) }}" 
                                    min="0" 
                                    required
                                    class="w-full px-4 py-3 border border-green-300 dark:border-green-600 rounded-xl shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('stock_quantity') border-red-500 focus:ring-red-500 @enderror"
@@ -158,17 +160,18 @@
 
                         <!-- Minimum Stock Level -->
                         <div>
-                            <label for="minimum_stock" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Minimum Stock Level
+                            <label for="min_stock_level" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Minimum Stock Level <span class="text-red-500">*</span>
                             </label>
                             <input type="number" 
-                                   id="minimum_stock" 
-                                   name="minimum_stock" 
-                                   value="{{ old('minimum_stock', 0) }}" 
+                                   id="min_stock_level" 
+                                   name="min_stock_level" 
+                                   value="{{ old('min_stock_level', $component->min_stock_level) }}" 
                                    min="0"
-                                   class="w-full px-4 py-3 border border-green-300 dark:border-green-600 rounded-xl shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('minimum_stock') border-red-500 focus:ring-red-500 @enderror"
+                                   required
+                                   class="w-full px-4 py-3 border border-green-300 dark:border-green-600 rounded-xl shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('min_stock_level') border-red-500 focus:ring-red-500 @enderror"
                                    placeholder="0">
-                            @error('minimum_stock')
+                            @error('min_stock_level')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
@@ -185,18 +188,50 @@
                     </h4>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Supplier -->
+                        <!-- Category -->
                         <div>
-                            <label for="supplier" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Supplier
+                            <label for="category" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Category
                             </label>
                             <input type="text" 
-                                   id="supplier" 
-                                   name="supplier" 
-                                   value="{{ old('supplier') }}" 
-                                   class="w-full px-4 py-3 border border-purple-300 dark:border-purple-600 rounded-xl shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('supplier') border-red-500 focus:ring-red-500 @enderror"
-                                   placeholder="Supplier name">
-                            @error('supplier')
+                                   id="category" 
+                                   name="category" 
+                                   value="{{ old('category', $component->category) }}" 
+                                   class="w-full px-4 py-3 border border-purple-300 dark:border-purple-600 rounded-xl shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('category') border-red-500 focus:ring-red-500 @enderror"
+                                   placeholder="Component category">
+                            @error('category')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Brand -->
+                        <div>
+                            <label for="brand" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Brand
+                            </label>
+                            <input type="text" 
+                                   id="brand" 
+                                   name="brand" 
+                                   value="{{ old('brand', $component->brand) }}" 
+                                   class="w-full px-4 py-3 border border-purple-300 dark:border-purple-600 rounded-xl shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('brand') border-red-500 focus:ring-red-500 @enderror"
+                                   placeholder="Component brand">
+                            @error('brand')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Model -->
+                        <div>
+                            <label for="model" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Model
+                            </label>
+                            <input type="text" 
+                                   id="model" 
+                                   name="model" 
+                                   value="{{ old('model', $component->model) }}" 
+                                   class="w-full px-4 py-3 border border-purple-300 dark:border-purple-600 rounded-xl shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200 @error('model') border-red-500 focus:ring-red-500 @enderror"
+                                   placeholder="Component model">
+                            @error('model')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
@@ -212,7 +247,7 @@
                                            id="is_active" 
                                            name="is_active" 
                                            value="1" 
-                                           {{ old('is_active', true) ? 'checked' : '' }}
+                                           {{ old('is_active', $component->is_active) ? 'checked' : '' }}
                                            class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-purple-300 rounded transition-all duration-200">
                                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Active</span>
                                 </label>
@@ -236,7 +271,7 @@
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        Create Component
+                        Update Component
                     </button>
                 </div>
             </form>
@@ -244,3 +279,4 @@
     </div>
 </div>
 @endsection
+

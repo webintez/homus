@@ -31,6 +31,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::post('/send-otp', [CustomerAuthController::class, 'sendOtp'])->name('send-otp');
     Route::post('/verify-otp', [CustomerAuthController::class, 'verifyOtp'])->name('verify-otp');
     Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
+    
 
     // Protected routes
     Route::middleware(['auth:customer'])->group(function () {
