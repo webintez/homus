@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('title', 'Services')
 
 @section('content')
@@ -48,6 +52,9 @@
                     <thead class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                                Image
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
                                 Service
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
@@ -70,18 +77,26 @@
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach($services as $service)
                             <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/10 dark:hover:to-purple-900/10 transition-all duration-200">
+                                <!-- Service Image -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="h-12 w-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                                        @if($service->image)
+                                            <img src="{{ Storage::url($service->image) }}" alt="{{ $service->name }}" class="h-12 w-12 object-cover">
+                                        @else
+                                            <div class="h-12 w-12 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center">
+                                                <svg class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+
                                 <!-- Service Info -->
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="h-12 w-12 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-xl flex items-center justify-center mr-4">
-                                            <svg class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $service->name }}</div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">ID: {{ $service->id }}</div>
-                                        </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $service->name }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">ID: {{ $service->id }}</div>
                                     </div>
                                 </td>
 
@@ -101,8 +116,8 @@
                                 <!-- Pricing -->
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        <div class="font-semibold">${{ number_format($service->base_price, 2) }}</div>
-                                        <div class="text-gray-500 dark:text-gray-400">${{ number_format($service->hourly_rate, 2) }}/hr</div>
+                                        <div class="font-semibold">₹{{ number_format($service->base_price, 2) }}</div>
+                                        <div class="text-gray-500 dark:text-gray-400">₹{{ number_format($service->hourly_rate, 2) }}/hr</div>
                                     </div>
                                 </td>
 

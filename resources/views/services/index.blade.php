@@ -120,11 +120,11 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm text-gray-500">Starting from</p>
-                                    <p class="text-2xl font-bold text-gray-900">${{ number_format($service->base_price, 2) }}</p>
+                                    <p class="text-2xl font-bold text-gray-900">₹{{ number_format($service->base_price, 2) }}</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-sm text-gray-500">Hourly Rate</p>
-                                    <p class="text-lg font-semibold text-gray-900">${{ number_format($service->hourly_rate, 2) }}/hr</p>
+                                    <p class="text-lg font-semibold text-gray-900">₹{{ number_format($service->hourly_rate, 2) }}/hr</p>
                                 </div>
                             </div>
                         </div>

@@ -10,8 +10,13 @@ use App\Http\Controllers\Auth\TechnicianAuthController;
 use Illuminate\Support\Facades\Route;
 
 // Public frontend routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [ServiceController::class, 'index'])->name('home');
 Route::get('/maintenance', [HomeController::class, 'maintenance'])->name('maintenance');
+
+// Test route
+Route::get('/test', function () {
+    return 'Test route working!';
+})->name('test');
 
 // Public service routes
 Route::get('/services', [ServiceController::class, 'index'])->name('services');
@@ -75,6 +80,7 @@ Route::prefix('technician')->name('technician.')->group(function () {
         Route::post('/bookings/{booking}/reject', [TechnicianController::class, 'rejectBooking'])->name('bookings.reject');
         Route::post('/bookings/{booking}/start', [TechnicianController::class, 'startJob'])->name('bookings.start');
         Route::post('/bookings/{booking}/complete', [TechnicianController::class, 'completeJob'])->name('bookings.complete');
+        Route::post('/bookings/{booking}/update-notes', [TechnicianController::class, 'updateNotes'])->name('bookings.update-notes');
         Route::post('/availability', [TechnicianController::class, 'updateAvailability'])->name('availability.update');
         Route::get('/notifications', [TechnicianController::class, 'notifications'])->name('notifications');
     });

@@ -123,7 +123,7 @@
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">$</span>
+                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">₹</span>
                                 </div>
                                 <input type="number" 
                                        id="price" 

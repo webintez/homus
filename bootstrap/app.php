@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.auth' => \App\Http\Middleware\AdminAuth::class,
             'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
+            'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
         
         // Apply maintenance mode check to all web routes

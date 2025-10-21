@@ -41,7 +41,32 @@ class TechnicianController extends Controller
     {
         $technician = Auth::guard('technician')->user();
         $technician->load(['skills.serviceCategory', 'serviceAreas']);
-        return view('technician.profile', compact('technician'));
+        
+        // Prepare selected skills for the form
+        $selectedSkills = [];
+        if ($technician->skills) {
+            $selectedSkills = is_string($technician->skills) 
+                ? explode(',', $technician->skills) 
+                : (array) $technician->skills;
+        }
+        
+        // Prepare selected service areas for the form
+        $selectedServiceAreas = [];
+        if ($technician->service_areas) {
+            $selectedServiceAreas = is_string($technician->service_areas) 
+                ? explode(',', $technician->service_areas) 
+                : (array) $technician->service_areas;
+        }
+        
+        // Prepare selected days for the form
+        $selectedDays = [];
+        if ($technician->available_days) {
+            $selectedDays = is_string($technician->available_days) 
+                ? explode(',', $technician->available_days) 
+                : (array) $technician->available_days;
+        }
+        
+        return view('technician.profile', compact('technician', 'selectedSkills', 'selectedServiceAreas', 'selectedDays'));
     }
 
     public function updateProfile(Request $request)
@@ -64,7 +89,7 @@ class TechnicianController extends Controller
             'available_from' => 'nullable|date_format:H:i',
             'available_to' => 'nullable|date_format:H:i|after:available_from',
             'available_days' => 'nullable|array',
-            'available_days.*' => 'string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+            'available_days.*' => 'string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
         ]);
 
         if ($validator->fails()) {
@@ -266,7 +291,7 @@ class TechnicianController extends Controller
             'available_from' => 'nullable|date_format:H:i',
             'available_to' => 'nullable|date_format:H:i|after:available_from',
             'available_days' => 'nullable|array',
-            'available_days.*' => 'string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+            'available_days.*' => 'string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
         ]);
 
         if ($validator->fails()) {
@@ -281,6 +306,33 @@ class TechnicianController extends Controller
 
         return redirect()->back()
             ->with('success', 'Availability updated successfully.');
+    }
+
+    public function updateNotes(Request $request, Booking $booking)
+    {
+        $technician = Auth::guard('technician')->user();
+
+        // Ensure the booking belongs to the authenticated technician
+        if ($booking->technician_id !== $technician->id) {
+            abort(403, 'Unauthorized access to booking.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'technician_notes' => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $booking->update([
+            'technician_notes' => $request->technician_notes,
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Notes updated successfully.');
     }
 
     public function notifications()

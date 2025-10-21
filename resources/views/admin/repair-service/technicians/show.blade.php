@@ -130,7 +130,7 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Profile Picture</h3>
                         <div class="text-center">
                             @if($technician->profile_picture)
-                                <img src="{{ Storage::url($technician->profile_picture) }}" alt="Profile" class="h-24 w-24 rounded-full object-cover mx-auto">
+                                <img src="{{ Storage::url($technician->profile_picture) }}" alt="Profile" class="h-24 w-24 rounded-full object-cover mx-auto" onerror="console.log('Admin image failed to load:', this.src)">
                             @else
                                 <div class="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto">
                                     <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -289,18 +289,10 @@ class RepairServiceController extends Controller
             $data['image'] = $request->file('image')->store('services', 'public');
         }
 
-        Service::create([
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'slug' => \Str::slug($request->name),
-            'description' => $request->description,
-            'base_price' => $request->base_price,
-            'hourly_rate' => $request->hourly_rate,
-            'estimated_duration' => $request->estimated_duration,
-            'image' => $data['image'] ?? null,
-            'is_active' => $request->boolean('is_active', true),
-            'sort_order' => $request->sort_order ?? 0,
-        ]);
+        // Add slug to data
+        $data['slug'] = \Str::slug($request->name);
+
+        Service::create($data);
 
         return redirect()->route('admin.repair-service.services')
             ->with('success', 'Service created successfully.');
@@ -345,18 +337,10 @@ class RepairServiceController extends Controller
             $data['image'] = $request->file('image')->store('services', 'public');
         }
 
-        $service->update([
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'slug' => \Str::slug($request->name),
-            'description' => $request->description,
-            'base_price' => $request->base_price,
-            'hourly_rate' => $request->hourly_rate,
-            'estimated_duration' => $request->estimated_duration,
-            'image' => $data['image'] ?? $service->image,
-            'is_active' => $request->boolean('is_active', true),
-            'sort_order' => $request->sort_order ?? 0,
-        ]);
+        // Add slug to data
+        $data['slug'] = \Str::slug($request->name);
+
+        $service->update($data);
 
         return redirect()->route('admin.repair-service.services')
             ->with('success', 'Service updated successfully.');

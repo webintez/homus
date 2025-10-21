@@ -1,25 +1,132 @@
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-50 dark:bg-black">
 <head>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
-    
-    <!-- Styles -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $service->name }} - Service Details</title>
+    <title>{{ $service->name }} | HomeUs</title>
+    <meta name="description" content="View detailed information about {{ $service->name }} service with HomeUs.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                    }
+                }
+            }
+        }
+    </script>
     
+    <!-- Dark Mode Script -->
+    <script>
+        // Prevent FOUC (Flash of Unstyled Content)
+        if (localStorage.getItem('darkMode') === 'true' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     
     <style>
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); 
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .service-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            background: linear-gradient(145deg, #f8fafc 0%, #ffffff 100%);
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .dark .service-card {
+            background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+            border-color: #374151;
+        }
+        .dark .service-card:hover {
+            background: linear-gradient(145deg, #111827 0%, #1f2937 100%);
+            border-color: #667eea;
+        }
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .dark .category-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .search-input {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .search-input:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+        .dark .search-input {
+            background: rgba(31, 41, 55, 0.95);
+            border-color: rgba(75, 85, 99, 0.3);
+        }
+        .dark .search-input:focus {
+            border-color: rgba(75, 85, 99, 0.5);
+            box-shadow: 0 0 0 4px rgba(75, 85, 99, 0.1);
+        }
         
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        /* Dark mode overrides */
+        .dark .bg-white { background-color: #1f2937 !important; }
+        .dark .bg-gray-50 { background-color: #111827 !important; }
+        .dark .bg-gray-100 { background-color: #374151 !important; }
+        .dark .text-gray-900 { color: #f9fafb !important; }
+        .dark .text-gray-800 { color: #f3f4f6 !important; }
+        .dark .text-gray-700 { color: #e5e7eb !important; }
+        .dark .text-gray-600 { color: #d1d5db !important; }
+        .dark .text-gray-500 { color: #9ca3af !important; }
+        .dark .text-gray-400 { color: #6b7280 !important; }
+        .dark .border-gray-200 { border-color: #374151 !important; }
+        .dark .border-gray-300 { border-color: #4b5563 !important; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="h-full bg-gray-50 dark:bg-black">
     <!-- Navigation -->
     <nav class="bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,30 +170,43 @@
 
     <!-- Main Content -->
     <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <a href="{{ route('customer.services') }}" class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
-                        ← Back to Services
-                    </a>
-                    <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ $service->name }}</h2>
-                    <p class="mt-2 text-gray-600">{{ $service->category->name }}</p>
-                </div>
-                <div>
-                    <a href="{{ route('customer.services.book', $service) }}" 
-                       class="btn-primary text-white px-6 py-3 rounded-md text-sm font-medium">
-                        Book This Service
-                    </a>
+        <!-- Hero Section -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl mb-8">
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div class="relative px-6 py-12 md:px-12 md:py-20">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                        {{ $service->name }}
+                    </h1>
+                    <p class="text-xl md:text-2xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+                        {{ $service->category->name }} - Professional appliance repair service
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        @auth('customer')
+                            <a href="{{ route('customer.services.book', $service) }}" class="btn-primary px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300">
+                                Book This Service
+                            </a>
+                        @else
+                            <a href="{{ route('customer.login') }}" class="btn-primary px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300">
+                                Login to Book
+                            </a>
+                        @endauth
+                        <a href="{{ route('customer.services') }}" class="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-white/30 transition-all duration-300">
+                            Browse All Services
+                        </a>
+                    </div>
                 </div>
             </div>
+            <!-- Decorative elements -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Service Image -->
-                <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="service-card shadow rounded-lg overflow-hidden">
                     @if($service->image)
                         <img src="{{ Storage::url($service->image) }}" alt="{{ $service->name }}" class="w-full h-64 object-cover">
                     @else
@@ -99,7 +219,7 @@
                 </div>
 
                 <!-- Service Description -->
-                <div class="bg-white shadow rounded-lg">
+                <div class="service-card shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Service Description</h3>
                         <div class="prose max-w-none">
@@ -109,7 +229,7 @@
                 </div>
 
                 <!-- What's Included -->
-                <div class="bg-white shadow rounded-lg">
+                <div class="service-card shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">What's Included</h3>
                         <ul class="space-y-3">
@@ -151,17 +271,17 @@
             <!-- Sidebar -->
             <div class="space-y-6">
                 <!-- Pricing Card -->
-                <div class="bg-white shadow rounded-lg">
+                <div class="service-card shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Pricing</h3>
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-500">Base Price</span>
-                                <span class="text-2xl font-bold text-gray-900">${{ number_format($service->base_price, 2) }}</span>
+                                <span class="text-2xl font-bold text-gray-900">₹{{ number_format($service->base_price, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-500">Hourly Rate</span>
-                                <span class="text-lg font-semibold text-gray-900">${{ number_format($service->hourly_rate, 2) }}/hr</span>
+                                <span class="text-lg font-semibold text-gray-900">₹{{ number_format($service->hourly_rate, 2) }}/hr</span>
                             </div>
                             <div class="border-t pt-4">
                                 <p class="text-xs text-gray-500 mb-2">* Final price may vary based on complexity and parts needed</p>
@@ -172,7 +292,7 @@
                 </div>
 
                 <!-- Service Details -->
-                <div class="bg-white shadow rounded-lg">
+                <div class="service-card shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Service Details</h3>
                         <div class="space-y-3">
@@ -212,14 +332,21 @@
                 <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
                     <h3 class="text-lg font-medium text-indigo-900 mb-2">Ready to Book?</h3>
                     <p class="text-sm text-indigo-700 mb-4">Schedule your repair service today and get your appliance working like new.</p>
-                    <a href="{{ route('customer.services.book', $service) }}" 
-                       class="w-full btn-primary text-white py-2 px-4 rounded-md text-sm font-medium text-center block">
-                        Book This Service
-                    </a>
+                    @auth('customer')
+                        <a href="{{ route('customer.services.book', $service) }}" 
+                           class="w-full btn-primary text-white py-2 px-4 rounded-md text-sm font-medium text-center block">
+                            Book This Service
+                        </a>
+                    @else
+                        <a href="{{ route('customer.login') }}" 
+                           class="w-full btn-primary text-white py-2 px-4 rounded-md text-sm font-medium text-center block">
+                            Login to Book
+                        </a>
+                    @endauth
                 </div>
 
                 <!-- Contact Info -->
-                <div class="bg-white shadow rounded-lg">
+                <div class="service-card shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Need Help?</h3>
                         <div class="space-y-2">

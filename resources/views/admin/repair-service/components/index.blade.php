@@ -105,7 +105,7 @@
                                 <!-- Pricing -->
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        <div class="font-semibold">${{ number_format($component->price, 2) }}</div>
+                                        <div class="font-semibold">₹{{ number_format($component->price, 2) }}</div>
                                         <div class="text-gray-500 dark:text-gray-400">per unit</div>
                                     </div>
                                 </td>

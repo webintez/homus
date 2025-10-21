@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BookingStatus extends Model
 {
-    public $timestamps = false;
-    
     protected $fillable = [
         'booking_id',
         'status',
@@ -23,6 +21,6 @@ class BookingStatus extends Model
 
     public function updatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(Customer::class, 'updated_by');
     }
 }

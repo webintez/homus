@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('title', 'Edit Service')
 
 @section('content')
@@ -40,7 +44,7 @@
 
         <!-- Form Content -->
         <div class="p-8">
-            <form action="{{ route('admin.repair-service.services.update', $service) }}" method="POST" class="space-y-8">
+            <form action="{{ route('admin.repair-service.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                 @csrf
                 @method('PUT')
                 
@@ -127,7 +131,7 @@
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">$</span>
+                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">₹</span>
                                 </div>
                                 <input type="number" 
                                        id="base_price" 
@@ -151,7 +155,7 @@
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">$</span>
+                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">₹</span>
                                 </div>
                                 <input type="number" 
                                        id="hourly_rate" 
@@ -188,6 +192,70 @@
                             @error('estimated_duration')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Image Section -->
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-2xl p-6 border border-orange-200 dark:border-orange-800">
+                    <h4 class="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-4 flex items-center">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Service Image
+                    </h4>
+                    
+                    <div class="space-y-4">
+                        <!-- Current Image Display -->
+                        @if($service->image)
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Current Image
+                            </label>
+                            <div class="relative inline-block">
+                                <img src="{{ Storage::url($service->image) }}" alt="Current Service Image" class="h-32 w-48 object-cover rounded-lg border border-orange-200 dark:border-orange-700">
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Image Upload -->
+                        <div>
+                            <label for="image" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                {{ $service->image ? 'Replace Image' : 'Upload Image' }}
+                            </label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-orange-300 dark:border-orange-600 rounded-xl hover:border-orange-400 dark:hover:border-orange-500 transition-colors duration-200">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-orange-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600 dark:text-gray-400">
+                                        <label for="image" class="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-orange-600 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500">
+                                            <span>{{ $service->image ? 'Choose new image' : 'Upload an image' }}</span>
+                                            <input id="image" name="image" type="file" accept="image/*" class="sr-only">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        PNG, JPG, GIF up to 2MB. Recommended: 400x300px
+                                    </p>
+                                </div>
+                            </div>
+                            @error('image')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div id="image-preview" class="hidden">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                New Image Preview
+                            </label>
+                            <div class="relative inline-block">
+                                <img id="preview-img" src="" alt="Preview" class="h-32 w-48 object-cover rounded-lg border border-orange-200 dark:border-orange-700">
+                                <button type="button" id="remove-image" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors duration-200">
+                                    ×
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -236,5 +304,32 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const removeImageBtn = document.getElementById('remove-image');
+
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    removeImageBtn.addEventListener('click', function() {
+        imageInput.value = '';
+        imagePreview.classList.add('hidden');
+        previewImg.src = '';
+    });
+});
+</script>
 @endsection
 

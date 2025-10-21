@@ -89,7 +89,7 @@ class CustomerController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('customer.bookings', compact('bookings'));
+        return view('customer.bookings', compact('bookings', 'customer'));
     }
 
     public function showBooking(Booking $booking)
@@ -103,7 +103,7 @@ class CustomerController extends Controller
 
         $booking->load(['service', 'technician', 'statuses']);
 
-        return view('customer.booking-details', compact('booking'));
+        return view('customer.booking-details', compact('booking', 'customer'));
     }
 
     public function cancelBooking(Request $request, Booking $booking)
@@ -190,8 +190,9 @@ class CustomerController extends Controller
 
     public function createBooking(Service $service)
     {
+        $customer = Auth::guard('customer')->user();
         $service->load('category');
-        return view('customer.create-booking', compact('service'));
+        return view('customer.create-booking', compact('service', 'customer'));
     }
 
     public function storeBooking(Request $request, Service $service)
@@ -277,6 +278,6 @@ class CustomerController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('customer.notifications', compact('notifications'));
+        return view('customer.notifications', compact('notifications', 'customer'));
     }
 }

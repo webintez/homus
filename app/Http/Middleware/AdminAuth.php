@@ -13,7 +13,7 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check()) {
+        if (!Auth::guard('web')->check()) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
             $table->string('status');
             $table->text('notes')->nullable();
-            $table->timestamp('created_at');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('updated_by')->nullable()->constrained('customers')->onDelete('set null');
+            $table->timestamps();
         });
     }
 

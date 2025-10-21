@@ -82,7 +82,7 @@ class CustomerAuthController extends Controller
 
         if (Auth::guard('customer')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('customer.dashboard'));
+            return redirect()->intended(route('customer.services'));
         }
 
         return redirect()->back()

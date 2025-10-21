@@ -148,11 +148,11 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-500">Base Price</span>
-                                <span class="text-2xl font-bold text-gray-900">${{ number_format($service->base_price, 2) }}</span>
+                                <span class="text-2xl font-bold text-gray-900">₹{{ number_format($service->base_price, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-500">Hourly Rate</span>
-                                <span class="text-lg font-semibold text-gray-900">${{ number_format($service->hourly_rate, 2) }}/hr</span>
+                                <span class="text-lg font-semibold text-gray-900">₹{{ number_format($service->hourly_rate, 2) }}/hr</span>
                             </div>
                             <div class="border-t pt-4">
                                 <p class="text-xs text-gray-500 mb-2">* Final price may vary based on complexity and parts needed</p>

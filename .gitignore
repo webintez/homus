@@ -38,6 +38,14 @@ check_*.php
 *_cookies.txt
 cookies.txt
 final_cookies.txt
+admin_cookies.txt
+
+# Database files
+database/database.sqlite
+database_mysql_export.sql
+
+# Deployment files (keep deployment guides but exclude sensitive configs)
+.env.production
 
 # Build files
 /public/build
